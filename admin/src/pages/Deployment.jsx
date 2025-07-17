@@ -31,7 +31,7 @@ const Deployment = () => {
   useEffect(() => {
     // Check if webhook is configured
     checkWebhookConfiguration();
-    
+
     // Connect to Socket.io
     const newSocket = io(window.location.origin);
     setSocket(newSocket);
@@ -122,7 +122,7 @@ const Deployment = () => {
     };
 
     const statusInfo = statusMap[status?.toLowerCase()] || { color: 'neutral', label: status || 'Unknown' };
-    
+
     return <Badge active={isDeploying} textColor={statusInfo.color}>{statusInfo.label}</Badge>;
   };
 
@@ -168,7 +168,7 @@ const Deployment = () => {
               </Alert>
             </Box>
           )}
-          
+
           <Flex direction="column" alignItems="stretch" gap={4}>
             {/* Current Deployment Status */}
             {deploymentStatus && (
@@ -245,8 +245,8 @@ const Deployment = () => {
                             <Typography
                               variant="pi"
                               textColor={
-                                log.type === 'error' ? 'danger500' : 
-                                log.type === 'warning' ? 'warning500' : 
+                                log.type === 'error' ? 'danger500' :
+                                log.type === 'warning' ? 'warning500' :
                                 'neutral0'
                               }
                             >
@@ -270,8 +270,8 @@ const Deployment = () => {
               <Card>
                 <CardBody>
                   <CardContent>
-                    <Flex direction="column" alignItems="center" gap={3} padding={6}>
-                      <Typography variant="alpha" textColor="neutral600">
+                    <Flex direction="column" alignItems="center" justifyContent="center" gap={3} padding={6}>
+                      <Typography variant="alpha" textColor="neutral600" textAlign="center">
                         No active deployments
                       </Typography>
                       <Typography variant="epsilon" textColor="neutral600" textAlign="center">
