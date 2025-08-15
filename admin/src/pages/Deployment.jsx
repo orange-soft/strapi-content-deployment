@@ -268,7 +268,7 @@ const Deployment = () => {
             {/* Instructions */}
             {!deploymentStatus && !isDeploying && (
               <Card>
-                <CardBody>
+                <CardBody justifyContent="center">
                   <CardContent>
                     <Flex direction="column" alignItems="center" justifyContent="center" gap={3} padding={6}>
                       <Typography variant="alpha" textColor="neutral600" textAlign="center">

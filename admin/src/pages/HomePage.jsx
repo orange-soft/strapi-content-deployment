@@ -8,7 +8,7 @@ const HomePage = () => {
 
   return (
     <Main>
-      <h1>24123</h1>
+      <h1></h1>
     </Main>
   );
 };
