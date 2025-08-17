@@ -93,10 +93,10 @@ strapi-content-deployment/
 
 ## API Endpoints
 
-- `GET /admin/api/strapi-content-deployment/settings` - Get current settings
-- `PUT /admin/api/strapi-content-deployment/settings` - Update settings
-- `POST /admin/api/strapi-content-deployment/deploy` - Trigger deployment
-- `GET /admin/api/strapi-content-deployment/deployment/status` - Get deployment status
+- `GET /strapi-content-deployment/settings` - Get current settings
+- `PUT /strapi-content-deployment/settings` - Update settings
+- `POST /strapi-content-deployment/deploy` - Trigger deployment
+- `GET /strapi-content-deployment/deployment/status` - Get deployment status
 
 ## WebSocket Events
 

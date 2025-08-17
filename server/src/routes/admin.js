@@ -9,6 +9,7 @@ module.exports = {
       handler: 'settings.getSettings',
       config: {
         policies: [],
+
       },
     },
     {

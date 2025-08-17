@@ -30,7 +30,7 @@ const Settings = () => {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const { data } = await get('/admin/api/strapi-content-deployment/settings');
+      const { data } = await get('/strapi-content-deployment/settings');
       setSettings(data.data || { webhookUrl: '', vercelToken: '', projectId: '' });
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -53,7 +53,7 @@ const Settings = () => {
 
     setSaving(true);
     try {
-      await put('/admin/api/strapi-content-deployment/settings', settings);
+      await put('/strapi-content-deployment/settings', settings);
       setNotification({
         type: 'success',
         message: 'Settings saved successfully',
