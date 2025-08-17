@@ -75,7 +75,7 @@ const Deployment = () => {
 
   const checkWebhookConfiguration = async () => {
     try {
-      const { data } = await get('/api/strapi-content-deployment/settings');
+      const { data } = await get('/admin/api/strapi-content-deployment/settings');
       setHasWebhook(!!data.data?.webhookUrl);
     } catch (error) {
       console.error('Error checking webhook configuration:', error);
@@ -84,7 +84,7 @@ const Deployment = () => {
 
   const fetchDeploymentStatus = async () => {
     try {
-      const { data } = await get('/api/strapi-content-deployment/deployment/status');
+      const { data } = await get('/admin/api/strapi-content-deployment/deployment/status');
       setIsDeploying(data.data.isDeploying);
       setDeploymentStatus(data.data.currentDeployment);
       setLogs(data.data.logs || []);

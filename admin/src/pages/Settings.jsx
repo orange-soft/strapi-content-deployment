@@ -30,7 +30,7 @@ const Settings = () => {
   const fetchSettings = async () => {
     setLoading(true);
     try {
-      const { data } = await get('/api/strapi-content-deployment/settings');
+      const { data } = await get('/admin/api/strapi-content-deployment/settings');
       setSettings(data.data || { webhookUrl: '', vercelToken: '', projectId: '' });
     } catch (error) {
       console.error('Error fetching settings:', error);
@@ -53,7 +53,7 @@ const Settings = () => {
 
     setSaving(true);
     try {
-      await put('/api/strapi-content-deployment/settings', settings);
+      await put('/admin/api/strapi-content-deployment/settings', settings);
       setNotification({
         type: 'success',
         message: 'Settings saved successfully',
@@ -103,7 +103,7 @@ const Settings = () => {
               />
             </Box>
           )}
-          
+
           <Box
             background="neutral0"
             hasRadius
@@ -125,7 +125,7 @@ const Settings = () => {
                   required
                 />
               </Box>
-              
+
               <Box>
                 <TextInput
                   label="Vercel Token (Optional)"
@@ -137,7 +137,7 @@ const Settings = () => {
                   type="password"
                 />
               </Box>
-              
+
               <Box>
                 <TextInput
                   label="Vercel Project ID (Optional)"
@@ -148,7 +148,7 @@ const Settings = () => {
                   onChange={handleChange('projectId')}
                 />
               </Box>
-              
+
               <Box paddingTop={4}>
                 <Typography variant="pi" textColor="neutral600">
                   Note: Vercel Token and Project ID are optional but required for real-time deployment status tracking.
