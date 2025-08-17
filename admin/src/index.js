@@ -17,6 +17,9 @@ export default {
         const { App } = await import('./pages/App');
         return App;
       },
+      permissions: [
+        { action: 'plugin::strapi-content-deployment.read', subject: null },
+      ],
     });
 
     // Settings menu link
@@ -40,6 +43,9 @@ export default {
             const { default: Settings } = await import('./pages/Settings');
             return Settings;
           },
+          permissions: [
+            { action: 'plugin::strapi-content-deployment.settings.read', subject: null },
+          ],
         },
       ]
     );
