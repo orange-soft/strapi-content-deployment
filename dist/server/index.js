@@ -86,7 +86,8 @@ var settings = ({ strapi }) => ({
         data: settings2 || {
           webhookUrl: "",
           vercelToken: "",
-          projectId: ""
+          projectId: "",
+          teamId: ""
         }
       };
     } catch (error) {
@@ -96,6 +97,7 @@ var settings = ({ strapi }) => ({
   async updateSettings(ctx) {
     try {
       const { body } = ctx.request;
+      console.log("Received settings update:", body);
       if (!body || !body.webhookUrl) {
         ctx.throw(400, "Webhook URL is required");
       }
@@ -110,6 +112,7 @@ var settings = ({ strapi }) => ({
           webhookUrl: body.webhookUrl,
           vercelToken: body.vercelToken || "",
           projectId: body.projectId || "",
+          teamId: body.teamId || "",
           updatedAt: (/* @__PURE__ */ new Date()).toISOString()
         }
       });
@@ -184,7 +187,7 @@ var deployment = ({ strapi }) => ({
       }
       if (settings2.vercelToken && settings2.projectId && deploymentId) {
         console.log("Starting deployment status polling...");
-        this.pollDeploymentStatus(settings2.vercelToken, settings2.projectId, deploymentId);
+        this.pollDeploymentStatus(settings2.vercelToken, settings2.projectId, deploymentId, settings2.teamId);
       } else {
         if (!deploymentId) {
           console.log("Cannot poll status: No deployment ID from webhook response");
@@ -229,15 +232,16 @@ var deployment = ({ strapi }) => ({
       }
     };
   },
-  async pollDeploymentStatus(token, projectId, deploymentId) {
-    console.log("Polling deployment status with:", { projectId, deploymentId });
+  async pollDeploymentStatus(token, projectId, deploymentId, teamId) {
+    console.log("Polling deployment status with:", { projectId, deploymentId, teamId });
     try {
       const checkStatus = async () => {
         try {
           const authToken = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-          console.log(`Fetching deployments from: https://api.vercel.com/v9/projects/${projectId}/deployments?limit=1`);
+          const teamParam = teamId ? `&teamId=${teamId}` : "";
+          console.log(`Fetching deployments from: https://api.vercel.com/v6/deployments?projectId=${projectId}${teamParam}&limit=1`);
           const deploymentsResponse = await axios.get(
-            `https://api.vercel.com/v9/projects/${projectId}/deployments?limit=1`,
+            `https://api.vercel.com/v6/deployments?projectId=${projectId}${teamParam}&limit=1`,
             {
               headers: {
                 Authorization: authToken
@@ -264,7 +268,7 @@ var deployment = ({ strapi }) => ({
               logs: this.deploymentState.logs
             });
           }
-          const status = deployment2.state || deployment2.readyState;
+          const status = deployment2.readyState || deployment2.state;
           if (status === "READY" || status === "ERROR" || status === "CANCELED") {
             this.deploymentState.isDeploying = false;
             this.deploymentState.currentDeployment.completedAt = (/* @__PURE__ */ new Date()).toISOString();

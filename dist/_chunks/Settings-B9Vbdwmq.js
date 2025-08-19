@@ -12,7 +12,8 @@ const Settings = () => {
   const [settings, setSettings] = react.useState({
     webhookUrl: "",
     vercelToken: "",
-    projectId: ""
+    projectId: "",
+    teamId: ""
   });
   const [loading, setLoading] = react.useState(false);
   const [saving, setSaving] = react.useState(false);
@@ -24,7 +25,7 @@ const Settings = () => {
     setLoading(true);
     try {
       const { data } = await get("/strapi-content-deployment/settings");
-      setSettings(data.data || { webhookUrl: "", vercelToken: "", projectId: "" });
+      setSettings(data.data || { webhookUrl: "", vercelToken: "", projectId: "", teamId: "" });
     } catch (error) {
       console.error("Error fetching settings:", error);
       setNotification({
@@ -44,6 +45,7 @@ const Settings = () => {
     }
     setSaving(true);
     try {
+      console.log("Saving settings:", settings);
       await put("/strapi-content-deployment/settings", settings);
       setNotification({
         type: "success",
@@ -137,6 +139,17 @@ const Settings = () => {
                 placeholder: "prj_xxxxxxxxxxxx",
                 value: settings.projectId,
                 onChange: handleChange("projectId")
+              }
+            ) }),
+            /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { children: /* @__PURE__ */ jsxRuntime.jsx(
+              designSystem.TextInput,
+              {
+                label: "Vercel Team ID (Optional)",
+                name: "teamId",
+                hint: "Required if your project is under a team. Found in Vercel team settings URL",
+                placeholder: "team_xxxxxxxxxxxx or slug name",
+                value: settings.teamId,
+                onChange: handleChange("teamId")
               }
             ) }),
             /* @__PURE__ */ jsxRuntime.jsx(designSystem.Box, { paddingTop: 4, children: /* @__PURE__ */ jsxRuntime.jsx(designSystem.Typography, { variant: "pi", textColor: "neutral600", children: "Note: Vercel Token and Project ID are optional but required for real-time deployment status tracking. Without them, deployments will still trigger but you won't see live progress updates." }) })

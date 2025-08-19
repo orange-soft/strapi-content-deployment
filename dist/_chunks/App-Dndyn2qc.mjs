@@ -6,7 +6,7 @@ import { useIntl } from "react-intl";
 import { useState, useEffect } from "react";
 import io from "socket.io-client";
 import { Play, ArrowUp } from "@strapi/icons";
-import Settings from "./Settings-kFzenPKF.mjs";
+import Settings from "./Settings-DYj8dL9V.mjs";
 const Deployment = () => {
   const { formatMessage } = useIntl();
   const { get, post } = useFetchClient();

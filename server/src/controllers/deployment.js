@@ -23,7 +23,7 @@ module.exports = ({ strapi }) => ({
       });
 
       const settings = await pluginStore.get({ key: 'settings' });
-      
+
       if (!settings || !settings.webhookUrl) {
         ctx.throw(400, 'Webhook URL not configured. Please configure it in settings.');
       }
@@ -78,7 +78,7 @@ module.exports = ({ strapi }) => ({
       // Start polling for deployment status if we have ALL requirements
       if (settings.vercelToken && settings.projectId && deploymentId) {
         console.log('Starting deployment status polling...');
-        this.pollDeploymentStatus(settings.vercelToken, settings.projectId, deploymentId);
+        this.pollDeploymentStatus(settings.vercelToken, settings.projectId, deploymentId, settings.teamId);
       } else {
         // Log what's missing
         if (!deploymentId) {
@@ -90,14 +90,14 @@ module.exports = ({ strapi }) => ({
         if (!settings.projectId) {
           console.log('Cannot poll status: No project ID configured');
         }
-        
+
         // If no polling available, simulate completion after a delay
         console.log('Using simple mode - will complete after 5 seconds');
         setTimeout(() => {
           this.deploymentState.isDeploying = false;
           this.deploymentState.currentDeployment.status = 'completed';
           this.deploymentState.currentDeployment.completedAt = new Date().toISOString();
-          
+
           if (strapi.io) {
             strapi.io.emit('deployment:completed', this.deploymentState.currentDeployment);
           }
@@ -113,11 +113,11 @@ module.exports = ({ strapi }) => ({
     } catch (error) {
       this.deploymentState.isDeploying = false;
       this.deploymentState.currentDeployment = null;
-      
+
       if (strapi.io) {
         strapi.io.emit('deployment:failed', { error: error.message });
       }
-      
+
       ctx.throw(500, error);
     }
   },
@@ -132,18 +132,19 @@ module.exports = ({ strapi }) => ({
     };
   },
 
-  async pollDeploymentStatus(token, projectId, deploymentId) {
-    console.log('Polling deployment status with:', { projectId, deploymentId });
+  async pollDeploymentStatus(token, projectId, deploymentId, teamId) {
+    console.log('Polling deployment status with:', { projectId, deploymentId, teamId });
     try {
       const checkStatus = async () => {
         try {
-          // Ensure token has Bearer prefix
+          // Ensure token has Bearer prefix for Vercel API
           const authToken = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
-          
+
           // Get the latest deployment for this project
-          console.log(`Fetching deployments from: https://api.vercel.com/v9/projects/${projectId}/deployments?limit=1`);
+          const teamParam = teamId ? `&teamId=${teamId}` : '';
+          console.log(`Fetching deployments from: https://api.vercel.com/v6/deployments?projectId=${projectId}${teamParam}&limit=1`);
           const deploymentsResponse = await axios.get(
-            `https://api.vercel.com/v9/projects/${projectId}/deployments?limit=1`,
+            `https://api.vercel.com/v6/deployments?projectId=${projectId}${teamParam}&limit=1`,
             {
               headers: {
                 Authorization: authToken,
@@ -157,7 +158,7 @@ module.exports = ({ strapi }) => ({
 
           const deployment = deploymentsResponse.data.deployments[0];
           this.deploymentState.currentDeployment.status = deployment.state || deployment.readyState;
-          
+
           // Update deployment URL
           if (deployment.url) {
             this.deploymentState.currentDeployment.vercelUrl = `https://${deployment.url}`;
@@ -178,16 +179,16 @@ module.exports = ({ strapi }) => ({
             });
           }
 
-          // Check if deployment is complete (v9 API uses 'state' instead of 'readyState')
-          const status = deployment.state || deployment.readyState;
+          // Check if deployment is complete (v6 API uses 'readyState')
+          const status = deployment.readyState || deployment.state;
           if (status === 'READY' || status === 'ERROR' || status === 'CANCELED') {
             this.deploymentState.isDeploying = false;
             this.deploymentState.currentDeployment.completedAt = new Date().toISOString();
-            
+
             if (strapi.io) {
               strapi.io.emit('deployment:completed', this.deploymentState.currentDeployment);
             }
-            
+
             return; // Stop polling
           }
 
@@ -195,16 +196,16 @@ module.exports = ({ strapi }) => ({
           setTimeout(checkStatus, 3000);
         } catch (error) {
           console.error('Error polling deployment status:', error.response?.data || error.message);
-          
+
           // If it's a 404, the project ID or token might be wrong
           // Instead of failing, just complete the deployment after showing a warning
           if (error.response?.status === 404) {
             console.log('Project not found. Completing deployment without real-time tracking.');
-            
+
             this.deploymentState.isDeploying = false;
             this.deploymentState.currentDeployment.status = 'completed';
             this.deploymentState.currentDeployment.completedAt = new Date().toISOString();
-            
+
             // Add a warning log
             const warningLog = {
               timestamp: new Date().toISOString(),
@@ -212,14 +213,14 @@ module.exports = ({ strapi }) => ({
               type: 'warning',
             };
             this.deploymentState.logs.push(warningLog);
-            
+
             if (strapi.io) {
               strapi.io.emit('deployment:completed', this.deploymentState.currentDeployment);
             }
           } else {
             // For other errors, fail the deployment
             this.deploymentState.isDeploying = false;
-            
+
             if (strapi.io) {
               strapi.io.emit('deployment:failed', { error: error.message });
             }

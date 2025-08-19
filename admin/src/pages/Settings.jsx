@@ -18,6 +18,7 @@ const Settings = () => {
     webhookUrl: '',
     vercelToken: '',
     projectId: '',
+    teamId: '',
   });
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -31,7 +32,7 @@ const Settings = () => {
     setLoading(true);
     try {
       const { data } = await get('/strapi-content-deployment/settings');
-      setSettings(data.data || { webhookUrl: '', vercelToken: '', projectId: '' });
+      setSettings(data.data || { webhookUrl: '', vercelToken: '', projectId: '', teamId: '' });
     } catch (error) {
       console.error('Error fetching settings:', error);
       setNotification({
@@ -53,6 +54,7 @@ const Settings = () => {
 
     setSaving(true);
     try {
+      console.log('Saving settings:', settings);
       await put('/strapi-content-deployment/settings', settings);
       setNotification({
         type: 'success',
@@ -146,6 +148,17 @@ const Settings = () => {
                   placeholder="prj_xxxxxxxxxxxx"
                   value={settings.projectId}
                   onChange={handleChange('projectId')}
+                />
+              </Box>
+
+              <Box>
+                <TextInput
+                  label="Vercel Team ID (Optional)"
+                  name="teamId"
+                  hint="Required if your project is under a team. Found in Vercel team settings URL"
+                  placeholder="team_xxxxxxxxxxxx or slug name"
+                  value={settings.teamId}
+                  onChange={handleChange('teamId')}
                 />
               </Box>
 

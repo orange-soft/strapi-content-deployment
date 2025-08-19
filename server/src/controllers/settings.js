@@ -16,6 +16,7 @@ module.exports = ({ strapi }) => ({
           webhookUrl: '',
           vercelToken: '',
           projectId: '',
+          teamId: '',
         },
       };
     } catch (error) {
@@ -26,6 +27,7 @@ module.exports = ({ strapi }) => ({
   async updateSettings(ctx) {
     try {
       const { body } = ctx.request;
+      console.log('Received settings update:', body);
       
       if (!body || !body.webhookUrl) {
         ctx.throw(400, 'Webhook URL is required');
@@ -43,6 +45,7 @@ module.exports = ({ strapi }) => ({
           webhookUrl: body.webhookUrl,
           vercelToken: body.vercelToken || '',
           projectId: body.projectId || '',
+          teamId: body.teamId || '',
           updatedAt: new Date().toISOString(),
         },
       });

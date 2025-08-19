@@ -37,7 +37,7 @@ const index = {
         defaultMessage: "Deployment"
       },
       Component: async () => {
-        const { App } = await Promise.resolve().then(() => require("../_chunks/App-DtM-F9cL.js"));
+        const { App } = await Promise.resolve().then(() => require("../_chunks/App-14W6QmO2.js"));
         return App;
       },
       permissions: [
@@ -61,7 +61,7 @@ const index = {
           id: "settings",
           to: `plugins/${PLUGIN_ID}/settings`,
           Component: async () => {
-            const { default: Settings } = await Promise.resolve().then(() => require("../_chunks/Settings-13yDaLQZ.js"));
+            const { default: Settings } = await Promise.resolve().then(() => require("../_chunks/Settings-B9Vbdwmq.js"));
             return Settings;
           },
           permissions: [

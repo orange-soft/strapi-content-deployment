@@ -36,7 +36,7 @@ const index = {
         defaultMessage: "Deployment"
       },
       Component: async () => {
-        const { App } = await import("../_chunks/App-B8L-ckFK.mjs");
+        const { App } = await import("../_chunks/App-Dndyn2qc.mjs");
         return App;
       },
       permissions: [
@@ -60,7 +60,7 @@ const index = {
           id: "settings",
           to: `plugins/${PLUGIN_ID}/settings`,
           Component: async () => {
-            const { default: Settings } = await import("../_chunks/Settings-kFzenPKF.mjs");
+            const { default: Settings } = await import("../_chunks/Settings-DYj8dL9V.mjs");
             return Settings;
           },
           permissions: [

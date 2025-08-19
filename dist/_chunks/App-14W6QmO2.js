@@ -8,7 +8,7 @@ const reactIntl = require("react-intl");
 const react = require("react");
 const io = require("socket.io-client");
 const icons = require("@strapi/icons");
-const Settings = require("./Settings-13yDaLQZ.js");
+const Settings = require("./Settings-B9Vbdwmq.js");
 const _interopDefault = (e) => e && e.__esModule ? e : { default: e };
 const io__default = /* @__PURE__ */ _interopDefault(io);
 const Deployment = () => {
